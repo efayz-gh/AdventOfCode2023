@@ -1,14 +1,27 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Day1;
+namespace AOC.Days;
 
-internal partial class Program
+internal partial class Day1 : Day
 {
-    public static void Main()
+    public override string Part1()
     {
-        var lines = File.ReadAllLines("../../../input.txt").ToList();
+        var lines = File.ReadAllLines(FileInput).ToList();
 
-        var sum = lines
+        return lines
+            .Select(line => string.Concat(line
+                .Where(char.IsDigit)
+                .Select(c => int.Parse(c.ToString()))))
+            .Select(numList => int.Parse("" + numList.First() + numList.Last()))
+            .Sum()
+            .ToString();
+    }
+
+    public override string Part2()
+    {
+        var lines = File.ReadAllLines(FileInput).ToList();
+
+        return lines
             .Select(line => NumRegex()
                 .Matches(line)
                 .Select(match => match.Groups[1].Value switch
@@ -26,9 +39,8 @@ internal partial class Program
                 })
                 .ToList())
             .Select(numList => int.Parse("" + numList.First() + numList.Last()))
-            .Sum();
-
-        Console.WriteLine(sum);
+            .Sum()
+            .ToString();
     }
 
     [GeneratedRegex("(?=(one|two|three|four|five|six|seven|eight|nine|\\d))")]
