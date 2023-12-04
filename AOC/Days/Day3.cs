@@ -34,9 +34,9 @@ public partial class Day3 : Day
 
     public override string Part1()
     {
-        var lines = File.ReadAllLines(FileInput);
+        var input = File.ReadAllLines(FileInput);
 
-        var numIndices = lines.Select(line => NumberRegex().Matches(line)
+        var numIndices = input.Select(line => NumberRegex().Matches(line)
             .Select(match => (match.Index, match.Index + match.Length))).ToList();
 
         int sum = 0;
@@ -45,13 +45,13 @@ public partial class Day3 : Day
         {
             foreach (var (from, to) in numIndices[i])
             {
-                var num = lines[i][from..to];
+                var num = input[i][from..to];
 
                 bool isSymbolAdjacent = false;
 
                 for (var j = from; j < to; j++)
                 {
-                    if (SymbolAdjacent(lines, i, j))
+                    if (SymbolAdjacent(input, i, j))
                     {
                         isSymbolAdjacent = true;
                         break;
@@ -68,16 +68,21 @@ public partial class Day3 : Day
 
     public override string Part2()
     {
-        var lines = File.ReadAllLines(FileInput).ToList();
+        var input = File.ReadAllLines(FileInput).ToList();
 
-        var gearIndices = lines.Select(line => Regex.Matches(line, @"\*")
+        var gearIndices = input.Select(line => Regex.Matches(line, @"\*")
             .Select(match => match.Index)).ToList();
 
-        var numbers = lines.Select((line, index) => NumberRegex().Matches(line)
+        var numbers = input.Select((line, index) => NumberRegex().Matches(line)
             .Select(match => new Number(int.Parse(match.Value), index, match.Index, match.Length)));
 
         return gearIndices.Select((indices, line) => indices
-                .Select(index => numbers.SelectMany(numList => numList)
+                .Select(index => numbers
+                    .Where(num => num.Any(n =>
+                        n.Indices.Contains(index) ||
+                        n.Indices.Contains(index + 1) ||
+                        n.Indices.Contains(index - 1)))
+                    .SelectMany(num => num)
                     .Where(num => num.IsAdjacent(line, index))
                     .Select(num => num.Value)
                     .ToList())

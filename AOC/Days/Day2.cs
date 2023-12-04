@@ -8,11 +8,11 @@ public partial class Day2 : Day
     {
         const int maxRed = 12, maxGreen = 13, maxBlue = 14;
 
-        var lines = File.ReadAllLines(FileInput).ToList();
+        var input = File.ReadAllLines(FileInput).ToList();
 
         var idSum = 0;
 
-        foreach (var line in lines)
+        foreach (var line in input)
         {
             var gameId = int.Parse(GameIdRegex().Match(line).Value);
 
